@@ -4,7 +4,7 @@
   "description": "Keep track of your child's eating habbits",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jest": "^25.1.0",
+    "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.8",
     "sqlite3": "^4.1.1"
   },
