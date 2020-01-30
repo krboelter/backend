@@ -1,5 +1,5 @@
-exports.up = function(knex) {
-    knex.schema.createTable("users", (table) => {
+exports.up = async function(knex) {
+    await knex.schema.createTable("users", (table) => {
         table.increments()
         table.string("username")
             .notNullable()
@@ -10,13 +10,9 @@ exports.up = function(knex) {
             .notNullable()
         table.string("last_name")
             .notNullable()
-        table.integer("foods_id")
-            .notNullable()
-            .references("id")
-            .inTable("foods")
     })
 };
 
-exports.down = function(knex) {
-    knex.schema.dropTableIfExists("users")
+exports.down = async function(knex) {
+    await knex.schema.dropTableIfExists("users")
 };
