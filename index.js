@@ -1,7 +1,9 @@
 const express = require("express")
 const server = express()
+const authRouter = require("./auth/users")
 
 server.use(express.json())
+server.use("/api/auth", authRouter)
 
 server.get("/", (req, res, next) => {
     res.status(200).json({
