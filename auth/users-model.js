@@ -3,13 +3,14 @@ const db = require("../data/dbconfig")
 
 async function add(user) {
     user.password = await bcrypt.hash(user.password, 14)
-    const [newUser] = db("users").insert(user)
+    const [id] = await db("users").insert(user)
+    console.log(id)
 
-    return findById(newUser)
+    return findById(id)
 }
 
 function findById(id) {
-    db("users").where({ id }).first()
+    return db("users").where({ id }).first()
 }
 
 function findBy(filter) {
