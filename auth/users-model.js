@@ -16,13 +16,20 @@ function findById(id) {
 function findBy(filter) {
     const user = db("users")
         .where(filter)
-        .select("id", "username", "first_name", "last_name")
+        .select("id", "username", "first_name", "last_name", "password")
 
     return user
+}
+
+function findChildren(parentId) {
+    return db("children")
+        .where("id", parentId)
+        .select("id", "name", "age")
 }
 
 module.exports = {
     add,
     findById,
-    findBy
+    findBy,
+    findChildren
 }

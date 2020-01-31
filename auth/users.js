@@ -1,5 +1,9 @@
 const express = require("express")
 const router = express.Router()
+const bcrypt = require("bcryptjs")
+
+const restricted = require("../middleware/restricted")
+const generateToken = require("./token")
 const usersModel = require("./users-model")
 
 router.post("/register", async (req, res, next) => {
@@ -26,14 +30,61 @@ router.post("/register", async (req, res, next) => {
             })
         }
     } catch(err) {
-        console.log(err)
-        if (err) {
-            res.status(401).json({
-                message: "User could not be created"
+        next(err)
+    }
+})
+
+router.post("/login", async (req, res, next) => {
+    try {
+        const { username, password } = req.body
+        const user = await usersModel.findBy({ username }).first()
+        const verifyPassword = await bcrypt.compare(password, user.password)
+        
+
+        if (user && verifyPassword) {
+            const token = await generateToken(user)
+
+            res.status(200).json({
+                message: `Welcome ${user.username}`,
+                token
             })
         } else {
-            next(err)
+            res.status(401).json({
+                message: "Invalid credentials"
+            })
         }
+    } catch(err) {
+        next(err)
+    }
+})
+
+
+router.get("/users/:id", restricted, async (req, res, next) => {
+    try {
+        const id = req.params.id
+        const user = await usersModel.findById(id)
+        const data = await usersModel.findChildren(id)
+        
+        res.status(200).json({
+            username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            children: data // returns an array of children
+        })
+        
+    } catch(err) {
+        console.log("Unable to log you in...")
+        next(err)
+    }
+})
+
+router.get("/users/logout", restricted, async (req, res, next) => {
+    try {
+        res.status(200).json({
+            message: "You have been logged out."
+        })
+    } catch(err) {
+        next(err)
     }
 })
 
