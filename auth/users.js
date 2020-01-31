@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs")
 const restricted = require("../middleware/restricted")
 const generateToken = require("./token")
 const usersModel = require("./users-model")
+const entries = require("../children/entries")
 
 router.post("/register", async (req, res, next) => {
     try {
@@ -58,7 +59,6 @@ router.post("/login", async (req, res, next) => {
     }
 })
 
-
 router.get("/users/:id", restricted, async (req, res, next) => {
     try {
         const id = req.params.id
@@ -78,6 +78,7 @@ router.get("/users/:id", restricted, async (req, res, next) => {
     }
 })
 
+// not necessary, but if you want to use it...
 router.get("/users/logout", restricted, async (req, res, next) => {
     try {
         res.status(200).json({
@@ -87,5 +88,7 @@ router.get("/users/logout", restricted, async (req, res, next) => {
         next(err)
     }
 })
+
+router.use("/users", restricted, entries)
 
 module.exports = router
