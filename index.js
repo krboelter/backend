@@ -1,5 +1,7 @@
+require("dotenv").config()
 const express = require("express")
 const server = express()
+const authRouter = require("./auth/users")
 
 server.use(express.json())
 
@@ -8,6 +10,8 @@ server.get("/", (req, res, next) => {
         message: "Welcome to the website!"
     })
 })
+
+server.use("/api/auth", authRouter)
 
 server.get((error, req, res, next) => {
     console.log("Error: ", error)
@@ -21,6 +25,10 @@ server.get((error, req, res, next) => {
 const host = process.env.HOST || "http://localhost"
 const port = process.env.PORT || 5001
 
-server.listen(port, () => {
-    console.log(`\n***Server listening at ${host}:${port}***\n`)
-})
+if (!module.parent) {
+    server.listen(port, () => {
+        console.log(`\n***Server listening at ${host}:${port}***\n`)
+    })
+}
+
+module.exports = server

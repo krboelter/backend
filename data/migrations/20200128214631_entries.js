@@ -1,6 +1,12 @@
 exports.up = async function(knex) {
     await knex.schema.createTable("entries", (table) => {
         table.increments()
+        table.integer("user_id")
+            .notNullable()
+            .references("id")
+            .inTable("users")
+            .onUpdate("CASCADE")
+            .onDelete("CASCADE")
         table.integer("children_id")
             .notNullable()
             .references("id")
