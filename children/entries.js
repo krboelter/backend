@@ -1,22 +1,21 @@
 const express = require("express")
 const router = express.Router()
 
-const restricted = require("../middleware/restricted")
 const usersModel = require("../auth/users-model")
 const entriesModel = require("./entries-model")
 
 //gets all entries
-router.get("/:id/children/entries", async (req, res, next) => {
+router.get("/:id/entries", async (req, res, next) => {
     try {
-        
+        const entries = await entriesModel.getAllEntries(req.params.id)
+
+        res.status(200).json({
+            message: "Retrieving entries successful!",
+            entries: entries
+        })
     } catch(err) {
         next(err)
     }
-
-    // what it should return:
-    // an array of the children's entries but:
-    // children_id = name
-    // food_id = food_name
 })
 
 module.exports = router
