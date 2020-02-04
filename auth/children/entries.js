@@ -1,7 +1,6 @@
 const express = require("express")
 const router = express.Router()
 
-const usersModel = require("../auth/users-model")
 const entriesModel = require("./entries-model")
 
 //gets all entries
