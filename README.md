@@ -28,7 +28,7 @@ ___
 `Route: /api/auth/register`
 
 Parameters:
-| Value          | Required |
+| Key            | Required |
 | -------------- | -------- |
 | **username**   | Yes      |
 | **password**   | Yes      |

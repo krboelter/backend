@@ -46,7 +46,7 @@ function findBy(filter) {
 // returns the children [in an array] associated with the user's id
 function findChildren(parentId) {
     return db("children")
-        .where("id", parentId)
+        .where("user_id", parentId)
 }
 
 module.exports = {
