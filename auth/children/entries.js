@@ -27,13 +27,36 @@ router.get("/:id/entries", async (req, res, next) => {
     try {
         const entries = await entriesModel.getAllEntries(req.params.id)
 
-        res.status(200).json({
-            message: "Retrieving entries successful!",
-            entries: entries
-        })
+        if (entries == 0) {
+            res.status(400).json({
+                message: "No entries could be found."
+            })
+        } else {
+            res.status(200).json({
+                message: "Retrieving entries successful!",
+                entries: entries
+            })
+        }
+
     } catch(err) {
         next(err)
     }
 })
+
+// edit an entry
+router.put("/:userId/entries/:name/:entryId", async (req, res, next) => {
+    const userId = req.params.userId
+    const entryId = req.params.entryId
+    const name = req.params.name
+    const changes = req.body
+
+    const change = await entriesModel.editEntry(entryId, changes)
+    
+    res.status(201).json({
+        change
+    })
+})
+
+// deletes an entry
 
 module.exports = router

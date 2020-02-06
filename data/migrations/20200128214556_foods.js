@@ -1,6 +1,7 @@
 exports.up = async function(knex) {
     await knex.schema.createTable("foods", (table) => {
         table.increments()
+            .unique()
         table.string("food_name")
             .notNullable()
             .unique()
