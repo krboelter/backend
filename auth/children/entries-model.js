@@ -1,11 +1,7 @@
 const db = require("../../data/dbconfig")
+const allFoods = db("foods").select()
 
-// function findChildrenId(parentId) {
-//     return db("children")
-//         .where("id", parentId)
-//         .select("id")
-// }
-
+// gets all the entries
 async function getAllEntries(id) {
     const entries = await db("entries")
         .join("children", "entries.children_id", "=", "children.id")
@@ -15,6 +11,27 @@ async function getAllEntries(id) {
     return filterChildren(entries, id)
 }
 
+// adds an entry for a child
+async function addEntry(id, childName, entry) {
+    // gets the food object filtered by the food_name {id, food_id, category}
+    const foodId = await db("foods").where({ "food_name": entry.food_name }).first()
+    const childId = await db("children").where({ "name": childName }).first()
+    const amount = entry.amount
+    const date = entry.date
+
+    if (foodId == undefined) {
+        return "There is no food with that name"
+    } else {
+        const [newEntry] = await db("entries")
+            .insert({ user_id: id, children_id: childId.id, food_id: foodId.id, amount, date})
+        const newId = await findEntryById(newEntry).first()
+
+        return newId
+    }
+
+}
+
+// filters the child per the user id
 function filterChildren(array, id) {
     const children = []
     
@@ -27,7 +44,13 @@ function filterChildren(array, id) {
     return children
 }
 
+// finds an entry by the id
+function findEntryById(id) {
+    return db("entries")
+        .where({ id })
+}
+
 module.exports = {
-    // findChildrenId,
-    getAllEntries
+    getAllEntries,
+    addEntry
 }
