@@ -2,10 +2,7 @@ const db = require("../../data/dbconfig")
 
 // creates a new child
 async function createChild(id, child) {
-    const [newChild] = await db("children").insert(child)
-    const result = await findChild(newChild, id).first()
-
-    return result
+    return db("children").insert(child).returning("*")
 }
 
 // changes the child using the child's name
