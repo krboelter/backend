@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require("cors")
 const server = express()
 const authRouter = require("./auth/users")
+const foodsRouter = require("./foods/foods")
 
 server.use(cors())
 server.use(express.json())
@@ -14,6 +15,7 @@ server.get("/", (req, res, next) => {
 })
 
 server.use("/api/auth", authRouter)
+server.use("/api/foods", foodsRouter)
 
 server.get((error, req, res, next) => {
     console.log("Error: ", error)
