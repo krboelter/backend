@@ -36,12 +36,14 @@ async function editEntry(entryId, changes) {
     
     console.log(changes)
     if (!changes.food_name) {
+
         console.log("No Food Changes")
+
         const updates = await db("entries")
             .where("id", entryId)
             .update(changes)
-        
-        const newEntry = await findEntryById(updates)
+
+        const newEntry = await findEntryById(entryId).first()
         
         return newEntry
     } else {
@@ -51,25 +53,24 @@ async function editEntry(entryId, changes) {
             return "There is no food with that name."
         } else {
             console.log("Food Changes")
+
             console.log(foodId.id, changes.amount)
             const updates = await db("entries")
                 .where("id", entryId)
                 .update({ food_id: foodId.id, amount: changes.amount, date: changes.date })
     
-            
-            const newEntry = await findEntryById(updates)
+            console.log(updates, "UPDATES")
+            const newEntry = await findEntryById(entryId).first()
+
             return newEntry
         }
     }
 }
 
 // delete an entry
-async function deleteEntry(id, name) {
+async function deleteEntry(id) {
     const deleted = await db("entries")
-        .where({ id, name})
-        .first()
-    const deleteIt = await db("entries")
-        .where({ id, name })
+        .where({ id })
         .del()
     
     return deleted

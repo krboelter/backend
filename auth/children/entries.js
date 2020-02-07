@@ -45,18 +45,34 @@ router.get("/:id/entries", async (req, res, next) => {
 
 // edit an entry
 router.put("/:userId/entries/:name/:entryId", async (req, res, next) => {
-    const userId = req.params.userId
-    const entryId = req.params.entryId
-    const name = req.params.name
-    const changes = req.body
-
-    const change = await entriesModel.editEntry(entryId, changes)
+    try {
+        const entryId = req.params.entryId
+        const changes = req.body
     
-    res.status(201).json({
-        change
-    })
+        const change = await entriesModel.editEntry(entryId, changes)
+        
+        res.status(201).json({
+            change
+        })
+    } catch(err) {
+        console.log(err)
+        next(err)
+    }
 })
 
 // deletes an entry
+router.delete("/:userId/entries/:name/:entryId", async (req, res, next) => {
+    try {
+        const id = req.params.entryId
+
+        const deleted = await entriesModel.deleteEntry(id)
+
+        res.status(200).json({
+            message: "Entry has been deleted."
+        })
+    } catch(err) {
+        next(err)
+    }
+})
 
 module.exports = router
