@@ -1,7 +1,7 @@
 const db = require("../data/dbconfig")
 
 async function addFood(food) {
-    const [id] = await db("foods").insert(food)
+    const [id] = await db("foods").insert(food).returning("*")
 
     return getFoodById(id)
 }
