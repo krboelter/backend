@@ -7,14 +7,12 @@ async function createChild(id, child) {
 
 // changes the child using the child's name
 async function editChild(name, change) {
-    const changes = await db("children")
+    return db("children")
         .where({ name })
         .update(change)
-    const result = await findChildByName(name).first()
-
-    return result
+        .returning("*")
+    
 }
-
 // deletes a child
 function deleteChild(name) {
     return db("children")
