@@ -11,10 +11,11 @@ router.post("/:id/entries/:name", async (req, res, next) => {
         const entry = req.body
         const food = entry.food_name
 
-        const newEntry = await entriesModel.addEntry(id, name, entry)
+        const [newEntry] = await entriesModel.addEntry(id, name, entry)
+        const findEntry = await entriesModel.findEntryById(newEntry).first()
 
         res.status(201).json({
-            newEntry
+            Entry: findEntry
         })
 
     } catch(err) {
@@ -50,9 +51,10 @@ router.put("/:userId/entries/:name/:entryId", async (req, res, next) => {
         const changes = req.body
     
         const change = await entriesModel.editEntry(entryId, changes)
-        
+        const newChange = await entriesModel.findEntryById(entryId).first()
+
         res.status(201).json({
-            change
+            newChange
         })
     } catch(err) {
         console.log(err)

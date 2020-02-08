@@ -11,11 +11,9 @@ async function addEntry(id, childName, entry) {
     if (foodId == undefined) {
         return "There is no food with that name."
     } else {
-        const [newEntry] = await db("entries")
+        return db("entries")
         .insert({ user_id: id, children_id: childId.id, food_id: foodId.id, amount, date})
-        const newId = await findEntryById(newEntry).first()
-        
-        return newId
+        .returning("*")
     }
     
 }
@@ -39,13 +37,10 @@ async function editEntry(entryId, changes) {
 
         console.log("No Food Changes")
 
-        const updates = await db("entries")
+        return db("entries")
             .where("id", entryId)
             .update(changes)
-
-        const newEntry = await findEntryById(entryId).first()
-        
-        return newEntry
+            .returning("*")
     } else {
         const foodId = await filterFoodWithName(changes.food_name).first()
 
@@ -55,14 +50,10 @@ async function editEntry(entryId, changes) {
             console.log("Food Changes")
 
             console.log(foodId.id, changes.amount)
-            const updates = await db("entries")
+            return db("entries")
                 .where("id", entryId)
                 .update({ food_id: foodId.id, amount: changes.amount, date: changes.date })
-    
-            console.log(updates, "UPDATES")
-            const newEntry = await findEntryById(entryId).first()
-
-            return newEntry
+                .returning("*")
         }
     }
 }
@@ -109,5 +100,6 @@ module.exports = {
     getAllEntries,
     addEntry,
     editEntry,
-    deleteEntry
+    deleteEntry,
+    findEntryById
 }

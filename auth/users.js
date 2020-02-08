@@ -93,25 +93,16 @@ router.get("/users/:id", restricted, async (req, res, next) => {
 router.put("/users/:id", restricted, async (req, res, next) => {
     try {
         const changes = req.body
-        const username = changes.username
-        const password = changes.password
-        const first = changes.first_name
-        const last = changes.last_name
         const id = req.params.id
 
-        if (password && password.length < 6) {
+        if (changes.password && changes.password.length < 6) {
             res.status(401).json({
                 message: "Password length must be 6 or more characters."
-            })
-        } else if(password && password.length >= 6 && !username && !first && !last) {
-            const edited = await usersModel.editUser(id, changes)
-            
-            res.status(201).json({
-                message: "Password has been changed!"
             })
         } else {
             const edited = await usersModel.editUser(id, changes)
             const updatedUser = await usersModel.findById(id)
+            console.log(updatedUser, "FIND BY ID")
             updatedUser.password = undefined
 
             res.status(201).json({

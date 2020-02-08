@@ -18,9 +18,24 @@ function findById(id) {
 
 // edits a user
 async function editUser(id, changes) {
-    const editedUser = await db("users").where({ id }).update(changes)
-
-    return findById(editedUser).first().returning("*")
+    if (!changes.password) {
+        const username = changes.username
+        const first_name = changes.first_name
+        const last_name = changes.last_name
+        
+        return db("users").where({ id }).update(
+            { username, first_name, last_name }
+        ).returning("*")
+    } else {
+        const newPass = await bcrypt.hash(changes.password, 14)
+        const username = changes.username
+        const first_name = changes.first_name
+        const last_name = changes.last_name
+    
+        return db("users").where({ id }).update(
+            { username, password: newPass, first_name, last_name }
+        ).returning("*")
+    }
 }
 
 // deletes a user

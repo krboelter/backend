@@ -111,8 +111,8 @@ describe("website testing", () => {
         await createUser("ken", "abc123")
         const login = await loginUser("ken", "abc123")
         const res = await supertest(server)
-            .put("/api/auth/users/2")
-            .send({ first_name: "Kenneth" })
+            .put("/api/auth/users/3")
+            .send({ first_name: "Kenneth", last_name: "Boelter"})
             .set("token", login.body.token)
         
         console.log(res.body, "EDIT USER")
@@ -120,11 +120,13 @@ describe("website testing", () => {
         expect(res.status).toBe(201)
         expect(res.type).toBe("application/json")
         expect(res.body).toEqual({
-            id: 2,
-            username: "ken",
-            password: "abc123",
-            first_name: "Kenneth",
-            last_name: "Boelter"
+            message: "User has been updated.",
+            changes: {
+                id: 3,
+                username: "ken",
+                first_name: "Kenneth",
+                last_name: "Boelter"
+            }
         })
     })
 })
