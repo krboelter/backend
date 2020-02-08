@@ -20,13 +20,6 @@ function loginUser(username, password) {
         })
 }
 
-function getPassword(username) {
-    return db("users")
-        .where({ username })
-        .select("password")
-        .first()
-}
-
 beforeAll(async () => {
     await db.seed.run()
 })
@@ -37,7 +30,6 @@ describe("website testing", () => {
         const res = await supertest(server)
         .get("/api/foods")
             
-        console.log(res.body.foods.length, "LENGTH OF FOOD ARRAY")
         expect(res.status).toBe(200)
         expect(res.type).toBe("application/json")
         expect(res.body.foods.length).toBeGreaterThan(2)
@@ -61,46 +53,78 @@ describe("website testing", () => {
     
     test("gets user information", async () => {
         await createUser("ken", "abc123")
-        const pass = await getPassword("ken")
-        await loginUser("ken", pass)
+        const login = await loginUser("ken", "abc123")
         const res = await supertest(server)
-            .get("/api/auth/users/1")
-        
+            .get("/api/auth/users/3")
+            .set("token", login.body.token)
         
         expect(res.status).toBe(200)
+        expect(res.type).toBe("application/json")
+        expect(res.body.username).toEqual("ken")
     })
 
     test("creates a child", async () => {
-        const pass = await getPassword("Test")
-        await loginUser("Test", pass)
+        const login = await loginUser("Test", "test123")
         const res = await supertest(server)
-            .post("/api/auth/users/2/children")
+            .post("/api/auth/users/1/children")
             .send({
                 name: "Avery",
                 age: 1,
                 weight: "20 pounds"
             })
+            .set("token", login.body.token)
+
+        const newChild = await db("children")
+            .where("id", res.body.newChild[0])
+            .select("weight")
+            .first()
         
         expect(res.status).toBe(201)
+        expect(res.type).toBe("application/json")
+        expect(newChild.weight).toEqual("20 pounds")
     })
 
     test("gets entries for a user", async () => {
-        const pass = await getPassword("Test")
-        await loginUser("Test", pass)
+        const login = await loginUser("Test", "test123")
         const res = await supertest(server)
             .get("/api/auth/users/1/entries")
+            .set("token", login.body.token)
 
-        console.log(res.body)
         expect(res.status).toBe(200)
+        expect(res.type).toBe("application/json")
+        expect(res.body.entries.length).toBeGreaterThan(0)
     })
 
     test("deletes a user", async () => {
         await createUser("ken", "abc123")
-        const pass = getPassword("ken")
-        await loginUser("ken", pass)
+        const login = await loginUser("ken", "abc123")
         const res = await supertest(server)
             .delete("/api/auth/users/2")
+            .set("token", login.body.token)
 
         expect(res.status).toBe(200)
+        expect(res.type).toBe("application/json")
+        expect(res.body.message).toEqual("User 2 has been deleted.")
+    })
+
+    test("edit a user's first and last name", async () => {
+        await createUser("ken", "abc123")
+        const login = await loginUser("ken", "abc123")
+        const res = await supertest(server)
+            .put("/api/auth/users/2")
+            .send({ first_name: "Kenneth" })
+            .set("token", login.body.token)
+        
+        console.log(res.body, "EDIT USER")
+        
+        expect(res.status).toBe(201)
+        expect(res.type).toBe("application/json")
+        expect(res.body).toEqual({
+            id: 2,
+            username: "ken",
+            password: "abc123",
+            first_name: "Kenneth",
+            last_name: "Boelter"
+        })
     })
 })

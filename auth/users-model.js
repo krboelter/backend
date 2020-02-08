@@ -6,7 +6,7 @@ async function add(user) {
     user.password = await bcrypt.hash(user.password, 14)
     // for postgres remove the const ... = await and just explicitly return
     // for both add/edit
-    return db("users").insert(user).returning('*') // you have to do it this way for postgres
+    return db("users").insert(user).returning("*") // you have to do it this way for postgres
 }
 
 // returns the user information [includes password]
@@ -20,7 +20,7 @@ function findById(id) {
 async function editUser(id, changes) {
     const editedUser = await db("users").where({ id }).update(changes)
 
-    return findById(editedUser).first().returning('*')
+    return findById(editedUser).first().returning("*")
 }
 
 // deletes a user
