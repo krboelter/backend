@@ -3,6 +3,7 @@ const router = express.Router()
 const bcrypt = require("bcryptjs")
 
 const restricted = require("../middleware/restricted")
+const checkId = require("../middleware/check_id")
 const generateToken = require("./token")
 const usersModel = require("./users-model")
 const entries = require("./children/entries")
@@ -64,7 +65,7 @@ router.post("/login", async (req, res, next) => {
 })
 
 // gets user information [children included]
-router.get("/users/:id", restricted, async (req, res, next) => {
+router.get("/users/:id", restricted, checkId, async (req, res, next) => {
     try {
         const id = req.params.id
         const user = await usersModel.findById(id)
@@ -90,7 +91,7 @@ router.get("/users/:id", restricted, async (req, res, next) => {
 })
 
 // edit a user
-router.put("/users/:id", restricted, async (req, res, next) => {
+router.put("/users/:id", restricted, checkId, async (req, res, next) => {
     try {
         const changes = req.body
         const id = req.params.id
@@ -116,7 +117,7 @@ router.put("/users/:id", restricted, async (req, res, next) => {
 })
 
 // deletes a user
-router.delete("/users/:id", restricted, async (req, res, next) => {
+router.delete("/users/:id", restricted, checkId, async (req, res, next) => {
     try {
         const id = req.params.id
         const user = await usersModel.findById(id)
@@ -155,7 +156,7 @@ router.get("/users/logout", restricted, async (req, res, next) => {
     }
 })
 
-router.use("/users", restricted, entries)
-router.use("/users", restricted, children)
+router.use("/users", restricted, checkId, entries)
+router.use("/users", restricted, checkId, children)
 
 module.exports = router
