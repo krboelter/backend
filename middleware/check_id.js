@@ -7,10 +7,10 @@ const jwt = require("jsonwebtoken")
 module.exports = (req, res, next) => {
     const id = req.params.id || req.params.userId
 
-    const payload = jwt.decode(req.headers.token, {complete: true})
-    console.log(req.params.id)
+    const payload = jwt.verify(req.headers.token, process.env.JWT_SECRET)
+    console.log(payload, "validated payload")
 
-    if (payload.payload.subject != id) {
+    if (payload.subject != id) {
         res.status(401).json({
             message: "You are not permited to access this page."
         })
