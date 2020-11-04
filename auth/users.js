@@ -45,7 +45,7 @@ router.post("/login", async (req, res, next) => {
     try {
         const { username, password } = req.body
         const user = await usersModel.findBy({ username }).first()
-        const verifyPassword = await bcrypt.compare(password, user.password)        
+        const verifyPassword = await bcrypt.compare(password, user.password)
 
         if (user && verifyPassword) {
             const token = await generateToken(user)
@@ -156,7 +156,7 @@ router.get("/users/logout", restricted, async (req, res, next) => {
     }
 })
 
-router.use("/users", restricted, checkId, entries)
-router.use("/users", restricted, checkId, children)
+router.use("/users", restricted, entries)
+router.use("/users", restricted, children)
 
 module.exports = router
