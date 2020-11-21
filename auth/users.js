@@ -10,6 +10,7 @@ const entries = require("./children/entries")
 const children = require("./children/children")
 
 // creates a new user
+// /api/auth
 router.post("/register", async (req, res, next) => {
     try {
         const username = req.body.username
