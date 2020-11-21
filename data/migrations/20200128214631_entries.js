@@ -25,7 +25,7 @@ exports.up = async function(knex) {
             .notNullable()
         table.date("date")
             .notNullable()
-            .default(Date.now())
+            .default(knex.fn.now())
     })
 };
 
