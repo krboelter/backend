@@ -14,6 +14,7 @@ router.post("/:id/children", checkId, async (req, res, next) => {
             name: req.body.name,
             age: req.body.age,
             weight: req.body.weight,
+            weight_type: req.body.weight_type,
             user_id: id
         }
         const newChild = await childrenModel.createChild(id, child)
